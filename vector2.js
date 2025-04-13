@@ -13,6 +13,9 @@ export default class Vector2 {
     mult(b) {
         return new Vector2(this.x * b.x, this.y * b.y);
     }
+    scale(b) {
+        return new Vector2(this.x * b, this.y * b);
+    }
     div(b) {
         return new Vector2(this.x / b.x, this.y / b.y);
     }

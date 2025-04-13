@@ -10,15 +10,15 @@ export default class Player extends GameObject {
         super(position, 50, 100, colour);
         this.spawnPoint = position;
         this.velocity = new Vector2(0, 0);
-        this.maxSpeed = 6;
+        this.maxSpeed = 300;
         this.acceleration = 4;
         this.deceleration = 6;
         this.decelerationAir = 6;
-        this.gravity = 15;
+        this.gravity = 700;
         this.isGrounded = false;
         this.currentGravity = this.gravity;
         this.jumpEndGravityMultiplier = 2;
-        this.jumpForce = 10;
+        this.jumpForce = 550; 
         this.jumping = false;
         this.isCoyoteAvailable = false;
         this.coyoteTime = 0.1;
@@ -55,7 +55,7 @@ export default class Player extends GameObject {
 
         this.velocity.y += this.currentGravity * deltaTime;
 
-        this.collisionChecks();
+        this.collisionChecks(deltaTime);
         
         if (Input.keyJump && (this.isGrounded || this.canUseCoyote())) {
             this.jumpSFX.play();
@@ -67,22 +67,22 @@ export default class Player extends GameObject {
             this.currentGravity = this.gravity * this.jumpEndGravityMultiplier;
         }
         
-        this.position = this.position.add(this.velocity);
+        this.position = this.position.add(this.velocity.scale(deltaTime));
     }
 
     canUseCoyote() {
         return this.isCoyoteAvailable && !this.isGrounded && this.time < this.timeLeftGround + this.coyoteTime;
     }
 
-    collisionChecks() {
-        if (this.checkCollisionAtPosition(new Vector2(this.position.x + this.velocity.x, this.position.y))) {
+    collisionChecks(deltaTime) {
+        if (this.checkCollisionAtPosition(new Vector2(this.position.x + this.velocity.x * deltaTime, this.position.y))) {
             while (!this.checkCollisionAtPosition(new Vector2(this.position.x + Math.sign(this.velocity.x), this.position.y))) {
                 this.position.x += Math.sign(this.velocity.x);
             }
             this.velocity.x = 0;
         }
 
-        if (this.checkCollisionAtPosition(new Vector2(this.position.x, this.position.y + this.velocity.y))) {
+        if (this.checkCollisionAtPosition(new Vector2(this.position.x, this.position.y + this.velocity.y * deltaTime))) {
             while (!this.checkCollisionAtPosition(new Vector2(this.position.x, this.position.y + Math.sign(this.velocity.y)))) {
                 this.position.y += Math.sign(this.velocity.y);
             }
